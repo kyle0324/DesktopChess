@@ -16,29 +16,177 @@ namespace ChessMan
 
         public Space() { }
 
-
-
     }
     public class Board
     {
         public Space[,] Spaces { get; set; }
 
+        public void MarkAvailableMove(Piece piece, int y, int x)
+        {
+            if (Spaces[y, x].Piece != null && Spaces[y, x].Piece.Color == piece.Color){}
+            else if(piece.Type == PieceType.pawn && Spaces[y, x].Piece != null){}
+            else
+            {
+                piece.AvailabeMoves.Add(new Pos(y, x));
+            }
+        }
+
         private void AddThreatsKing(Piece piece)
         {
-
+            int x = piece.Position.X;
+            int y = piece.Position.Y;
+            if (x > 0)
+            {
+                if(y > 0)
+                {
+                    Spaces[y-1, x-1].UnderThreat.Add(piece);
+                    MarkAvailableMove(piece, y - 1, x - 1);
+                }
+                if(y < 7)
+                {
+                    Spaces[y+1, x-1].UnderThreat.Add(piece);
+                    MarkAvailableMove(piece, y + 1, x - 1);
+                }
+                Spaces[y, x-1].UnderThreat.Add(piece);
+                MarkAvailableMove(piece, y, x - 1);
+            }
+            if(x < 7)
+            {
+                if(y>0)
+                {
+                    Spaces[y-1, x+1].UnderThreat.Add(piece);
+                    MarkAvailableMove(piece, y - 1, x + 1);
+                }
+                if(y < 7)
+                {
+                    Spaces[y + 1, x + 1].UnderThreat.Add(piece);
+                    MarkAvailableMove(piece, y+1, x+1);
+                }
+                Spaces[y, x + 1].UnderThreat.Add(piece);
+                MarkAvailableMove(piece, y, x + 1);
+            }
+            if(y < 7)
+            {
+                Spaces[y + 1, x].UnderThreat.Add(piece);
+                MarkAvailableMove(piece, y + 1, x);
+            }
+            if(y > 0)
+            {
+                Spaces[y-1, x].UnderThreat.Add(piece);
+                MarkAvailableMove(piece, y-1, x);
+            }
+            
         }
 
         private void AddThreatsQueen(Piece piece)
         {
+
         }
 
-        private void AddThreatsBishop(Piece piece) { }
+        private void AddThreatsBishop(Piece piece) 
+        { 
+        
+        }
 
-        private void AddThreatsKnight(Piece piece) { }
+        private void AddThreatsKnight(Piece piece) 
+        { 
+            int x = piece.Position.X;
+            int y = piece.Position.Y;
+
+            if(x > 1 && y > 0)
+            {
+                Spaces[y-1, x-2].UnderThreat.Add(piece);
+                MarkAvailableMove(piece, y - 1, x - 2);
+            }
+            if(x > 1 && y < 7)
+            {
+                Spaces[y+1, x-2].UnderThreat.Add(piece);
+                MarkAvailableMove(piece, y+1, x - 2);
+            }
+            if(x > 0 && y > 1)
+            {
+                Spaces[y - 2, x - 1].UnderThreat.Add(piece);
+                MarkAvailableMove(piece, y-2, x - 1);
+            }
+            if(x>0 && y < 6)
+            {
+                Spaces[y+2, x-1].UnderThreat.Add(piece);
+                MarkAvailableMove(piece, y+2, x-1);
+            }
+            if(x < 6 && y > 0)
+            {
+                Spaces[y - 1, x + 2].UnderThreat.Add(piece);
+                MarkAvailableMove(piece, y - 1, x + 2);
+            }
+            if(x < 6 && y < 7)
+            {
+                Spaces[y + 1, x + 2].UnderThreat.Add(piece);
+                MarkAvailableMove(piece, y + 1, x + 2);
+            }
+            if(x < 7 && y > 1)
+            {
+                Spaces[y-2, x+1].UnderThreat.Add(piece);
+                MarkAvailableMove(piece, y-2,x+1);
+            }
+            if(x < 7 && y < 6)
+            {
+                Spaces[y + 2, x + 1].UnderThreat.Add(piece);
+                MarkAvailableMove(piece, y+2, x+1);
+            }
+        }
 
         private void AddThreatsRook(Piece piece) { }
 
-        private void AddThreatsPawn(Piece piece) { }
+        private void AddThreatsPawn(Piece piece)
+        {
+            if(piece.Color == Player.White)
+            {
+                Spaces[piece.Position.Y - 1, piece.Position.X].UnderThreat.Add(piece);
+                MarkAvailableMove(piece, piece.Position.Y -1, piece.Position.X);
+
+                if (!piece.HasMoved)
+                {
+                    Spaces[piece.Position.Y - 2, piece.Position.X].UnderThreat.Add(piece);
+                    MarkAvailableMove(piece, piece.Position.Y-2, piece.Position.X);
+                }
+                if(piece.Position.X > 0 && Spaces[piece.Position.Y-1, piece.Position.X - 1].Piece != null
+                    && Spaces[piece.Position.Y - 1, piece.Position.X - 1].Piece.Color != piece.Color)
+                {
+                    Spaces[piece.Position.Y - 1, piece.Position.X-1].UnderThreat.Add(piece);
+                    MarkAvailableMove(piece, piece.Position.Y - 1, piece.Position.X - 1);
+                }
+                if (piece.Position.X < 7 && Spaces[piece.Position.Y - 1, piece.Position.X + 1].Piece != null
+                    && Spaces[piece.Position.Y - 1, piece.Position.X + 1].Piece.Color != piece.Color)
+                {
+                    Spaces[piece.Position.Y - 1, piece.Position.X + 1].UnderThreat.Add(piece);
+                    MarkAvailableMove(piece, piece.Position.Y - 1, piece.Position.X + 1);
+                }
+
+
+            }
+            else
+            {
+                Spaces[piece.Position.Y + 1, piece.Position.X].UnderThreat.Add(piece);
+                MarkAvailableMove(piece, piece.Position.Y + 1, piece.Position.X);
+                if (!piece.HasMoved)
+                {
+                    Spaces[piece.Position.Y + 2, piece.Position.X].UnderThreat.Add(piece);
+                    MarkAvailableMove(piece, piece.Position.Y + 2, piece.Position.X);
+                }
+                if (piece.Position.X > 0 && Spaces[piece.Position.Y + 1, piece.Position.X - 1].Piece != null
+                    && Spaces[piece.Position.Y + 1, piece.Position.X - 1].Piece.Color != piece.Color)
+                {
+                    Spaces[piece.Position.Y + 1, piece.Position.X - 1].UnderThreat.Add(piece);
+                    MarkAvailableMove(piece, piece.Position.Y + 1, piece.Position.X - 1);
+                }
+                if (piece.Position.X < 7 && Spaces[piece.Position.Y + 1, piece.Position.X + 1].Piece != null
+                    && Spaces[piece.Position.Y + 1, piece.Position.X + 1].Piece.Color != piece.Color)
+                {
+                    Spaces[piece.Position.Y + 1, piece.Position.X + 1].UnderThreat.Add(piece);
+                    MarkAvailableMove(piece, piece.Position.Y + 1, piece.Position.X + 1);
+                }
+            }
+        }
 
 
         //update the peices available moves with this. Threats include occupied ally spaces
