@@ -77,15 +77,156 @@ namespace ChessMan
             }
             
         }
+        private void AddThreatsDiag(Piece piece)
+        {
+            int x = piece.Position.X;
+            int y = piece.Position.Y;
+            int tempx = 0;
+            int tempy = 0;
 
+            if (x < 7 && y < 7) //check down right
+            {
+                tempx = x + 1;
+                tempy = y + 1;
+                while (tempx > 8 && tempy > 8)
+                {
+                    Spaces[tempy, tempx].UnderThreat.Add(piece);
+                    MarkAvailableMove(piece, tempy, tempx);
+
+                    if (Spaces[tempy, tempx].IsOccupied())
+                    {
+                        break;
+                    }
+                    tempx++;
+                    tempy++;
+                }
+            }
+            if (x < 7 && y > 0) //check up right
+            {
+                tempx = x + 1;
+                tempy = y - 1;
+                while (tempx > 8 && tempy >= 0)
+                {
+                    Spaces[tempy, tempx].UnderThreat.Add(piece);
+                    MarkAvailableMove(piece, tempy, tempx);
+
+                    if (Spaces[tempy, tempx].IsOccupied())
+                    {
+                        break;
+                    }
+                    tempx++;
+                    tempy--;
+                }
+            }
+            if (x > 0 && y > 0) //check up left
+            {
+                tempx = x - 1;
+                tempy = y - 1;
+                while (tempx >= 0 && tempy >= 0)
+                {
+                    Spaces[tempy, tempx].UnderThreat.Add(piece);
+                    MarkAvailableMove(piece, tempy, tempx);
+
+                    if (Spaces[tempy, tempx].IsOccupied())
+                    {
+                        break;
+                    }
+                    tempx--;
+                    tempy--;
+                }
+            }
+            if (x > 0 && y < 7)//check down left
+            {
+                tempx = x - 1;
+                tempy = y + 1;
+                while (tempx >= 0 && tempy < 8)
+                {
+                    Spaces[tempy, tempx].UnderThreat.Add(piece);
+                    MarkAvailableMove(piece, tempy, tempx);
+
+                    if (Spaces[tempy, tempx].IsOccupied())
+                    {
+                        break;
+                    }
+                    tempx--;
+                    tempy++;
+                }
+            }
+        }
+
+        private void AddThreatsDpad(Piece piece)
+        {
+            int x = piece.Position.X;
+            int y = piece.Position.Y;
+            int tempx = 0;
+            int tempy = 0;
+
+            if (x > 0) //check left
+            {
+                tempx = x - 1;
+                while (tempx >= 0)
+                {
+                    Spaces[y, tempx].UnderThreat.Add(piece);
+                    MarkAvailableMove(piece, y, tempx);
+                    if (Spaces[y, tempx].IsOccupied())
+                    {
+                        break;
+                    }
+                    tempx--;
+                }
+            }
+            if (x < 7) //check right
+            {
+                tempx = x + 1;
+                while (tempx < 8)
+                {
+                    Spaces[y, tempx].UnderThreat.Add(piece);
+                    MarkAvailableMove(piece, y, tempx);
+                    if (Spaces[y, tempx].IsOccupied())
+                    {
+                        break;
+                    }
+                    tempx++;
+                }
+            }
+            if (y > 0) // check up
+            {
+                tempy = y - 1;
+                while (tempy >= 0)
+                {
+                    Spaces[tempy, x].UnderThreat.Add(piece);
+                    MarkAvailableMove(piece, tempy, x);
+                    if (Spaces[y, tempx].IsOccupied())
+                    {
+                        break;
+                    }
+                    tempy--;
+                }
+            }
+            if (y < 7) //check down
+            {
+                tempy = y + 1;
+                while (tempy < 8)
+                {
+                    Spaces[tempy, x].UnderThreat.Add(piece);
+                    MarkAvailableMove(piece, tempy, x);
+                    if (Spaces[y, tempx].IsOccupied())
+                    {
+                        break;
+                    }
+                    tempy++;
+                }
+            }
+        }
         private void AddThreatsQueen(Piece piece)
         {
-
+            AddThreatsDiag(piece);
+            AddThreatsDpad(piece);
         }
 
         private void AddThreatsBishop(Piece piece) 
-        { 
-        
+        {
+            AddThreatsDiag(piece);
         }
 
         private void AddThreatsKnight(Piece piece) 
@@ -135,7 +276,10 @@ namespace ChessMan
             }
         }
 
-        private void AddThreatsRook(Piece piece) { }
+        private void AddThreatsRook(Piece piece) 
+        {
+            AddThreatsDpad(piece);
+        }
 
         private void AddThreatsPawn(Piece piece)
         {
