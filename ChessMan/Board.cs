@@ -390,12 +390,133 @@ namespace ChessMan
 
         private void RemoveThreatsDiag(Piece piece)
         {
+            int x = piece.Position.X;
+            int y = piece.Position.Y;
+            int tempx = 0;
+            int tempy = 0;
 
+            if (x < 7 && y < 7) //check down right
+            {
+                tempx = x + 1;
+                tempy = y + 1;
+                while (tempx > 8 && tempy > 8)
+                {
+                    Spaces[tempy, tempx].UnderThreat.Remove(piece);
+                    if (Spaces[tempy, tempx].IsOccupied())
+                    {
+                        break;
+                    }
+                    tempx++;
+                    tempy++;
+                }
+            }
+            if (x < 7 && y > 0) //check up right
+            {
+                tempx = x + 1;
+                tempy = y - 1;
+                while (tempx > 8 && tempy >= 0)
+                {
+                    Spaces[tempy, tempx].UnderThreat.Remove(piece);
+                    if (Spaces[tempy, tempx].IsOccupied())
+                    {
+                        break;
+                    }
+                    tempx++;
+                    tempy--;
+                }
+            }
+            if (x > 0 && y > 0) //check up left
+            {
+                tempx = x - 1;
+                tempy = y - 1;
+                while (tempx >= 0 && tempy >= 0)
+                {
+                    Spaces[tempy, tempx].UnderThreat.Remove(piece);
+                    if (Spaces[tempy, tempx].IsOccupied())
+                    {
+                        break;
+                    }
+                    tempx--;
+                    tempy--;
+                }
+            }
+            if (x > 0 && y < 7)//check down left
+            {
+                tempx = x - 1;
+                tempy = y + 1;
+                while (tempx >= 0 && tempy < 8)
+                {
+                    Spaces[tempy, tempx].UnderThreat.Remove(piece);
+                    if (Spaces[tempy, tempx].IsOccupied())
+                    {
+                        break;
+                    }
+                    tempx--;
+                    tempy++;
+                }
+            }
         }
 
-        private void RemoveThreatsDpad(Piece piece)
+        private void RemoveThreatsDpad(Piece piece) 
+        //can make more efficient by just having a temp instead of tempy and tempx
         {
+            int x = piece.Position.X;
+            int y = piece.Position.Y;
+            int tempx = 0;
+            int tempy = 0;
 
+            if (x > 0) //check left
+            {
+                tempx = x - 1;
+                while (tempx >= 0)
+                {
+                    Spaces[y, tempx].UnderThreat.Remove(piece);
+                    if (Spaces[y, tempx].IsOccupied())
+                    {
+                        break;
+                    }
+                    tempx--;
+                }
+            }
+            if (x < 7) //check right
+            {
+                tempx = x + 1;
+                while (tempx < 8)
+                {
+                    Spaces[y, tempx].UnderThreat.Remove(piece);
+                    if (Spaces[y, tempx].IsOccupied())
+                    {
+                        break;
+                    }
+                    tempx++;
+                }
+            }
+            if (y > 0) // check up
+            {
+                tempy = y - 1;
+                while (tempy >= 0)
+                {
+                    Spaces[tempy, x].UnderThreat.Remove(piece);
+                    if (Spaces[y, tempx].IsOccupied())
+                    {
+                        break;
+                    }
+                    tempy--;
+                }
+            }
+            if (y < 7) //check down
+            {
+                tempy = y + 1;
+                while (tempy < 8)
+                {
+                    Spaces[tempy, x].UnderThreat.Remove(piece);
+                    if (Spaces[y, tempx].IsOccupied())
+                    {
+                        break;
+                    }
+                    tempy++;
+                }
+            }
         }
         private void RemoveThreatsQueen(Piece piece)
         {
@@ -409,14 +530,87 @@ namespace ChessMan
 
         private void RemoveThreatsKnight(Piece piece)
         {
+            int x = piece.Position.X;
+            int y = piece.Position.Y;
 
+            if (x > 1 && y > 0)
+            {
+                Spaces[y - 1, x - 2].UnderThreat.Remove(piece);
+            }
+            if (x > 1 && y < 7)
+            {
+                Spaces[y + 1, x - 2].UnderThreat.Remove(piece);
+            }
+            if (x > 0 && y > 1)
+            {
+                Spaces[y - 2, x - 1].UnderThreat.Remove(piece);
+            }
+            if (x > 0 && y < 6)
+            {
+                Spaces[y + 2, x - 1].UnderThreat.Remove(piece);
+            }
+            if (x < 6 && y > 0)
+            {
+                Spaces[y - 1, x + 2].UnderThreat.Remove(piece);
+            }
+            if (x < 6 && y < 7)
+            {
+                Spaces[y + 1, x + 2].UnderThreat.Remove(piece);
+            }
+            if (x < 7 && y > 1)
+            {
+                Spaces[y - 2, x + 1].UnderThreat.Remove(piece);
+            }
+            if (x < 7 && y < 6)
+            {
+                Spaces[y + 2, x + 1].UnderThreat.Remove(piece);
+            }
         }
 
         private void RemoveThreatsRook(Piece piece)
         {
             RemoveThreatsDpad(piece);
         }
-        private void RemoveThreatsPawn(Piece piece) { }
+        private void RemoveThreatsPawn(Piece piece)
+        {
+            if (piece.Color == Player.White)
+            {
+                Spaces[piece.Position.Y - 1, piece.Position.X].UnderThreat.Remove(piece);
+
+                if (!piece.HasMoved)
+                {
+                    Spaces[piece.Position.Y - 2, piece.Position.X].UnderThreat.Remove(piece);
+                }
+                if (piece.Position.X > 0 && Spaces[piece.Position.Y - 1, piece.Position.X - 1].Piece != null
+                    && Spaces[piece.Position.Y - 1, piece.Position.X - 1].Piece.Color != piece.Color)
+                {
+                    Spaces[piece.Position.Y - 1, piece.Position.X - 1].UnderThreat.Remove(piece);
+                }
+                if (piece.Position.X < 7 && Spaces[piece.Position.Y - 1, piece.Position.X + 1].Piece != null
+                    && Spaces[piece.Position.Y - 1, piece.Position.X + 1].Piece.Color != piece.Color)
+                {
+                    Spaces[piece.Position.Y - 1, piece.Position.X + 1].UnderThreat.Remove(piece);
+                }
+            }
+            else
+            {
+                Spaces[piece.Position.Y + 1, piece.Position.X].UnderThreat.Remove(piece);
+                if (!piece.HasMoved)
+                {
+                    Spaces[piece.Position.Y + 2, piece.Position.X].UnderThreat.Remove(piece);
+                }
+                if (piece.Position.X > 0 && Spaces[piece.Position.Y + 1, piece.Position.X - 1].Piece != null
+                    && Spaces[piece.Position.Y + 1, piece.Position.X - 1].Piece.Color != piece.Color)
+                {
+                    Spaces[piece.Position.Y + 1, piece.Position.X - 1].UnderThreat.Remove(piece);
+                }
+                if (piece.Position.X < 7 && Spaces[piece.Position.Y + 1, piece.Position.X + 1].Piece != null
+                    && Spaces[piece.Position.Y + 1, piece.Position.X + 1].Piece.Color != piece.Color)
+                {
+                    Spaces[piece.Position.Y + 1, piece.Position.X + 1].UnderThreat.Remove(piece);
+                }
+            }
+        }
 
         private void RemoveThreats(Piece piece) //remove availabe moves as well
         {
