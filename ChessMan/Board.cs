@@ -337,14 +337,74 @@ namespace ChessMan
         private void AddThreats(Piece piece)
         {
             //use this to check what piece it is
+            switch (piece.Type)
+            {
+                case PieceType.king: AddThreatsKing(piece); break;
+                case PieceType.pawn: AddThreatsPawn(piece); break;
+                case PieceType.knight: AddThreatsKnight(piece); break;
+                case PieceType.bishop: AddThreatsBishop(piece); break;
+                case PieceType.rook: AddThreatsRook(piece); break;
+                case PieceType.queen: AddThreatsQueen(piece); break;
+                default: break;
+            }
 
         }
 
-        private void RemoveThreatsKing(Piece piece) { }
-        private void RemoveThreatsQueen(Piece piece) { }
-        private void RemoveThreatsBishop(Piece piece)
+        private void RemoveThreatsKing(Piece piece)
+        {
+            int x = piece.Position.X;
+            int y = piece.Position.Y;
+            if (x > 0)
+            {
+                if (y > 0)
+                {
+                    Spaces[y - 1, x - 1].UnderThreat.Remove(piece);
+                }
+                if (y < 7)
+                {
+                    Spaces[y + 1, x - 1].UnderThreat.Remove(piece);
+                }
+                Spaces[y, x - 1].UnderThreat.Remove(piece);
+            }
+            if (x < 7)
+            {
+                if (y > 0)
+                {
+                    Spaces[y - 1, x + 1].UnderThreat.Remove(piece);
+                }
+                if (y < 7)
+                {
+                    Spaces[y + 1, x + 1].UnderThreat.Remove(piece);
+                }
+                Spaces[y, x + 1].UnderThreat.Remove(piece);
+            }
+            if (y < 7)
+            {
+                Spaces[y + 1, x].UnderThreat.Remove(piece);
+            }
+            if (y > 0)
+            {
+                Spaces[y - 1, x].UnderThreat.Remove(piece);
+            }
+        }
+
+        private void RemoveThreatsDiag(Piece piece)
         {
 
+        }
+
+        private void RemoveThreatsDpad(Piece piece)
+        {
+
+        }
+        private void RemoveThreatsQueen(Piece piece)
+        {
+            RemoveThreatsDiag(piece);
+            RemoveThreatsDpad(piece);
+        }
+        private void RemoveThreatsBishop(Piece piece)
+        {
+            RemoveThreatsDiag(piece);
         }
 
         private void RemoveThreatsKnight(Piece piece)
@@ -354,14 +414,25 @@ namespace ChessMan
 
         private void RemoveThreatsRook(Piece piece)
         {
-
+            RemoveThreatsDpad(piece);
         }
         private void RemoveThreatsPawn(Piece piece) { }
 
         private void RemoveThreats(Piece piece) //remove availabe moves as well
         {
             //use this to check what piece it is
+            piece.AvailabeMoves.Clear();
 
+            switch(piece.Type)
+            {
+                case PieceType.king: RemoveThreatsKing(piece); break;
+                case PieceType.pawn: RemoveThreatsPawn(piece); break;
+                case PieceType.knight: RemoveThreatsKnight(piece); break;
+                case PieceType.bishop: RemoveThreatsBishop(piece); break;
+                case PieceType.rook: RemoveThreatsRook(piece); break;
+                case PieceType.queen: RemoveThreatsQueen(piece); break;
+                default: break;
+            }
         }
 
         private void SetBoard()
