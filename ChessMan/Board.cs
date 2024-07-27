@@ -6,7 +6,7 @@ namespace ChessMan
 
     public class Space
     {
-        public Piece Piece { get; set; } = null;
+        public Piece Piece { get; set; }
         public bool IsOccupied()
         {
             return Piece != null;
@@ -19,7 +19,7 @@ namespace ChessMan
     }
     public class Board
     {
-        public Space[,] Spaces { get; set; }
+        public Space[,] Spaces { get; set; } = new Space[8, 8];
 
         public void MarkAvailableMove(Piece piece, int y, int x)
         {
@@ -632,7 +632,8 @@ namespace ChessMan
         private void SetBoard()
         {
             //initalize pieces
-            Spaces[0, 0].Piece = new Rook(Player.Black, new Pos(0, 0));
+            Piece RW = new Rook(Player.Black, new Pos(0, 0));
+            Spaces[0, 0].Piece = RW;
             Spaces[0, 1].Piece = new Knight(Player.Black, new Pos(0, 1));
             Spaces[0, 2].Piece = new Bishop(Player.Black, new Pos(0, 2));
             Spaces[0, 3].Piece = new King(Player.Black, new Pos(0,3));
@@ -716,9 +717,21 @@ namespace ChessMan
 
         }
 
+        private void InitializeSpaces()
+        {
+            for(int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    Spaces[i, j] = new Space();
+                }
+            }
+        }
+
         public Board()
         {
-            Spaces = new Space[8, 8];
+            //Spaces = new Space[8, 8];
+            InitializeSpaces();
             SetBoard();
         }
 
