@@ -1,8 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace ChessMan
 {
+    public enum Gamestate
+    {
+        White,
+        Black,
+        Finish
+    }
+
+    public enum MoveType
+    {
+        Norm,
+        CastleQ,
+        Castle,
+        Possante
+    }
 
     public class Space
     {
@@ -20,6 +35,11 @@ namespace ChessMan
     public class Board
     {
         public Space[,] Spaces { get; set; } = new Space[8, 8];
+
+        public bool Wcheck = false;
+        public bool Bcheck = false;
+        public int WMovesNum = 0;
+        public int BMovesNum = 0;
 
         public void MarkAvailableMove(Piece piece, int y, int x)
         {
@@ -626,6 +646,139 @@ namespace ChessMan
                 case PieceType.rook: RemoveThreatsRook(piece); break;
                 case PieceType.queen: RemoveThreatsQueen(piece); break;
                 default: break;
+            }
+        }
+
+        private void NormMove(Piece piece, Pos pos)
+        {
+            //move peice, clear threatens, add new threats
+            Pos temp = piece.Position;
+            RemoveThreats(piece);
+
+            piece.Position = pos;
+            if (Spaces[pos.Y, pos.X].IsOccupied())
+            {
+                RemoveThreats(Spaces[pos.Y, pos.X].Piece);
+            }
+            Spaces[pos.Y, pos.X].Piece = piece;
+            Spaces[temp.Y, temp.X].Piece = null;
+
+            AddThreats(piece);
+
+        }
+
+        private void CastleQMove(Piece piece, Pos pos) //move king left
+        {
+            Piece other;
+
+            if(piece.Type == PieceType.king)
+            {
+                other = Spaces[piece.Position.Y, 0].Piece;
+            }
+            else
+            {
+                other = Spaces[piece.Position.Y, 4].Piece;
+            }
+            RemoveThreats(piece);
+            RemoveThreats(other);
+
+            Spaces[pos.Y, pos.X].Piece = piece;
+            Spaces[piece.Position.Y, piece.Position.X].Piece = null;
+            piece.Position = pos;
+
+            if (other.Type == PieceType.king)
+            {
+                Spaces[piece.Position.Y, piece.Position.X - 1].Piece = other;
+                Spaces[other.Position.Y, other.Position.X].Piece = null;
+                other.Position.X = piece.Position.X - 1;
+            }
+            else //the rook
+            {
+                Spaces[piece.Position.Y, piece.Position.X + 1].Piece = other;
+                Spaces[other.Position.Y, other.Position.X].Piece = null;
+                other.Position.X = other.Position.X + 1;
+            }
+
+            AddThreats(other);
+            AddThreats(piece);
+
+
+        }
+
+        private void CastleMove(Piece piece, Pos pos) //move king right
+        {
+            Piece other;
+
+            if (piece.Type == PieceType.king)
+            {
+                other = Spaces[piece.Position.Y, 7].Piece;
+            }
+            else
+            {
+                other = Spaces[piece.Position.Y, 4].Piece;
+            }
+            RemoveThreats(piece);
+            RemoveThreats(other);
+
+            Spaces[pos.Y, pos.X].Piece = piece;
+            Spaces[piece.Position.Y, piece.Position.X].Piece = null;
+            piece.Position = pos;
+
+            if (other.Type == PieceType.king)
+            {
+                Spaces[piece.Position.Y, piece.Position.X + 1].Piece = other;
+                Spaces[other.Position.Y, other.Position.X].Piece = null;
+                other.Position.X = piece.Position.X + 1;
+            }
+            else //the rook
+            {
+                Spaces[piece.Position.Y, piece.Position.X - 1].Piece = other;
+                Spaces[other.Position.Y, other.Position.X].Piece = null;
+                other.Position.X = other.Position.X - 1;
+            }
+
+            AddThreats(other);
+            AddThreats(piece);
+
+        }
+
+        private void PossanteMove(Piece piece, Pos pos)
+        {
+            Pos temp = piece.Position;
+
+            RemoveThreats(Spaces[temp.Y, pos.X].Piece);
+            Spaces[temp.Y, pos.X].Piece = null;
+            foreach (Piece pieces in Spaces[temp.Y, pos.X].UnderThreat)
+            {
+                RemoveThreats(pieces);
+                AddThreats(pieces);
+            }
+
+
+        }
+
+        public void Move(Piece piece, Pos pos, MoveType move)
+        {
+            if (!piece.AvailabeMoves.Contains(pos)) { }
+            else
+            {
+                switch (move)
+                {
+                    case MoveType.Norm:
+                        NormMove(piece, pos);
+                        break;
+                    case MoveType.CastleQ:
+                        CastleQMove(piece, pos);
+                        break;
+                    case MoveType.Castle:
+                        CastleMove(piece, pos);
+                        break;
+                    case MoveType.Possante:
+                        PossanteMove(piece, pos);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
