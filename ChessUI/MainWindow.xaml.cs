@@ -18,6 +18,8 @@ namespace ChessUI
     public partial class MainWindow : Window
     {
         private readonly Image[,] peiceImages= new Image[8, 8];
+        private readonly Rectangle[,] highlights = new Rectangle[8, 8];
+        private Pos lastClicked;
         private Board board = new();
 
 
@@ -49,7 +51,46 @@ namespace ChessUI
                     Image image = new();
                     peiceImages[i, j] = image;
                     PeiceGrid.Children.Add(image);
+                    highlights[i, j] = new();
+                    HighlightGrid.Children.Add(highlights[i, j]);
                 }
+            }
+        }
+
+        private Pos FindSquare(Point point)
+        {
+            double squareSize = BoardGrid.ActualWidth / 8;
+            int x = (int) (point.X / squareSize);
+            int y = (int) (point.Y / squareSize);
+            return new Pos(y, x);
+        }
+
+        private void BoardGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Point point = e.GetPosition(BoardGrid); // this is in pixels
+            Pos pos = FindSquare(point);
+            if (board.Spaces[pos.Y, pos.X].IsOccupied())
+            {
+                Hilight(board.Spaces[pos.Y, pos.X].Piece);
+            }
+
+
+        }
+
+        private void Hilight(Piece piece)
+        {
+            Color color = Color.FromArgb(150, 125, 255, 125);
+            foreach(Pos move in piece.AvailabeMoves)
+            {
+                highlights[move.Y, move.X].Fill = new SolidColorBrush(color);
+            }
+        }
+
+        private void RemoveHilight(Piece piece)
+        {
+            foreach(Pos move in piece.AvailabeMoves)
+            {
+                highlights[move.Y, move.X].Fill = Brushes.Transparent;
             }
         }
     }

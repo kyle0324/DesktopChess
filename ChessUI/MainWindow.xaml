@@ -11,11 +11,13 @@
         Background="Black">
     <Viewbox>
         <Grid x:Name="BoardGrid"
-              Height="600" Width="600">
+              Height="600" Width="600"
+              MouseDown="BoardGrid_MouseDown">
             <Grid.Background>
                 <ImageBrush ImageSource="assets/Board.png"></ImageBrush>
             </Grid.Background>
-
+            <UniformGrid x:Name="HighlightGrid"
+                         Rows="8" Columns="8"></UniformGrid>
             <UniformGrid x:Name="PeiceGrid"
                          Rows="8" Columns="8"
                          RenderOptions.BitmapScalingMode="HighQuality">
