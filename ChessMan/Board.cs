@@ -817,8 +817,8 @@ namespace ChessMan
             Spaces[7, 3].Piece = new King(Player.White, new Pos(7, 3));
             Spaces[7, 4].Piece = new Queen(Player.White, new Pos(7, 4));
             Spaces[7, 5].Piece = new Bishop(Player.White, new Pos(7, 5));
-            Spaces[7, 6].Piece = new Knight(Player.White, new Pos(0, 6));
-            Spaces[7, 7].Piece = new Rook(Player.White, new Pos(0, 7));
+            Spaces[7, 6].Piece = new Knight(Player.White, new Pos(7, 6));
+            Spaces[7, 7].Piece = new Rook(Player.White, new Pos(7, 7));
 
             //set up spaces with their canMove lists
 
