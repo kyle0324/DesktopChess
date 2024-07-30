@@ -40,6 +40,7 @@ namespace ChessMan
         public bool Bcheck = false;
         public int WMovesNum = 0;
         public int BMovesNum = 0;
+        public Player turn = Player.White;
 
         public void MarkAvailableMove(Piece piece, int y, int x)
         {
@@ -759,28 +760,25 @@ namespace ChessMan
 
         public void Move(Piece piece, Pos pos, MoveType move)
         {
-            if (!piece.AvailabeMoves.Contains(pos)) { }
-            else
+            switch (move)
             {
-                switch (move)
-                {
-                    case MoveType.Norm:
-                        NormMove(piece, pos);
-                        break;
-                    case MoveType.CastleQ:
-                        CastleQMove(piece, pos);
-                        break;
-                    case MoveType.Castle:
-                        CastleMove(piece, pos);
-                        break;
-                    case MoveType.Possante:
-                        PossanteMove(piece, pos);
-                        break;
-                    default:
-                        break;
-                }
+                case MoveType.Norm:
+                    NormMove(piece, pos);
+                    break;
+                case MoveType.CastleQ:
+                    CastleQMove(piece, pos);
+                    break;
+                case MoveType.Castle:
+                    CastleMove(piece, pos);
+                    break;
+                case MoveType.Possante:
+                    PossanteMove(piece, pos);
+                    break;
+                default:
+                    break;
             }
         }
+
 
         private void SetBoard()
         {

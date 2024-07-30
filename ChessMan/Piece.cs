@@ -27,6 +27,18 @@
         public bool HasMoved { get; set; } = false;
 
         public List<Pos> AvailabeMoves { get; set; } = [];
+
+        public bool AvailabeMove(Pos pos)
+        {
+            foreach(var move in AvailabeMoves)
+            {
+                if (move.X == pos.X && move.Y == pos.Y)
+                {
+                    return true;
+                }
+            }
+            return false; 
+        }
         
     }
 

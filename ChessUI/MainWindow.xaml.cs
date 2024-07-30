@@ -69,14 +69,41 @@ namespace ChessUI
         {
             Point point = e.GetPosition(BoardGrid); // this is in pixels
             Pos pos = FindSquare(point);
-            if (board.Spaces[pos.Y, pos.X].IsOccupied())
+            if (board.Spaces[pos.Y, pos.X].IsOccupied()) //clicked on a piece
             {
                 if (lastClicked != null && board.Spaces[lastClicked.Y, lastClicked.X].IsOccupied())
                 {
                     RemoveHilight(board.Spaces[lastClicked.Y, lastClicked.X].Piece);
                 }
-                Hilight(board.Spaces[pos.Y, pos.X].Piece);
+                if (lastClicked != null && board.Spaces[lastClicked.Y, lastClicked.X].IsOccupied() && 
+                        board.turn == board.Spaces[lastClicked.Y, lastClicked.X].Piece.Color &&
+                        board.Spaces[lastClicked.Y, lastClicked.X].Piece.AvailabeMoves.Contains(pos))
+                {
+                    board.Move(board.Spaces[lastClicked.Y, lastClicked.X].Piece, pos, MoveType.Norm);
+                    lastClicked = pos;
+                }
+                else
+                {    
+                    Hilight(board.Spaces[pos.Y, pos.X].Piece);
+                    lastClicked = pos;
+                }
+            }
+            else //not a piece
+            {
+                if(lastClicked != null && board.Spaces[lastClicked.Y, lastClicked.X].IsOccupied())
+                {
+                    RemoveHilight(board.Spaces[lastClicked.Y, lastClicked.X].Piece);
+                }
+                if (lastClicked != null && board.Spaces[lastClicked.Y, lastClicked.X].IsOccupied() &&
+                        board.turn == board.Spaces[lastClicked.Y, lastClicked.X].Piece.Color &&
+                        board.Spaces[lastClicked.Y, lastClicked.X].Piece.AvailabeMove(pos))
+                {
+                    board.Move(board.Spaces[lastClicked.Y, lastClicked.X].Piece, pos, MoveType.Norm); //draw here 
+                    peiceImages[pos.Y, pos.X].Source = Images.GetImage(board.Spaces[pos.Y, pos.X].Piece); //now delete prev
+                    peiceImages[lastClicked.Y, lastClicked.X].Source = null;
+                }
                 lastClicked = pos;
+                
             }
 
 
