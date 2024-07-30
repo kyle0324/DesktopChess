@@ -71,8 +71,14 @@ namespace ChessUI
             Pos pos = FindSquare(point);
             if (board.Spaces[pos.Y, pos.X].IsOccupied())
             {
+                if (lastClicked != null && board.Spaces[lastClicked.Y, lastClicked.X].IsOccupied())
+                {
+                    RemoveHilight(board.Spaces[lastClicked.Y, lastClicked.X].Piece);
+                }
                 Hilight(board.Spaces[pos.Y, pos.X].Piece);
+                lastClicked = pos;
             }
+
 
 
         }
