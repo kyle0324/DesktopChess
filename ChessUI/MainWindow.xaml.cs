@@ -77,9 +77,11 @@ namespace ChessUI
                 }
                 if (lastClicked != null && board.Spaces[lastClicked.Y, lastClicked.X].IsOccupied() && 
                         board.turn == board.Spaces[lastClicked.Y, lastClicked.X].Piece.Color &&
-                        board.Spaces[lastClicked.Y, lastClicked.X].Piece.AvailabeMoves.Contains(pos))
+                        board.Spaces[lastClicked.Y, lastClicked.X].Piece.AvailabeMove(pos))
                 {
                     board.Move(board.Spaces[lastClicked.Y, lastClicked.X].Piece, pos, MoveType.Norm);
+                    peiceImages[pos.Y, pos.X].Source = Images.GetImage(board.Spaces[pos.Y, pos.X].Piece);
+                    peiceImages[lastClicked.Y, lastClicked.X].Source = null;
                     lastClicked = pos;
                 }
                 else
