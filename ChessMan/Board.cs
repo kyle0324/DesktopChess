@@ -45,12 +45,21 @@ namespace ChessMan
         public void MarkAvailableMove(Piece piece, int y, int x)
         {
             if (Spaces[y, x].Piece != null && Spaces[y, x].Piece.Color == piece.Color) { }
-            else if (piece.Type == PieceType.pawn && Spaces[y, x].Piece == null && ((Math.Abs(y - piece.Position.Y) + (Math.Abs(x - piece.Position.X))) == 2))
+            else if (piece.Type == PieceType.pawn)
             {
-                if(Math.Abs(y - piece.Position.Y) == 2)
+                if (Math.Abs(y - piece.Position.Y) == 2 && Spaces[y, x].Piece == null) //2 spaces foward
                 {
                     piece.AvailabeMoves.Add(new Pos(y, x));
-                }          
+                }
+                else if (Spaces[y, x].Piece != null && (Math.Abs(y - piece.Position.Y) + (Math.Abs(x - piece.Position.X)) == 2) && Math.Abs(y - piece.Position.Y) == 1) //diagnal take
+                {
+                    piece.AvailabeMoves.Add(new Pos(y, x));
+                }
+                else if (Spaces[y, x].Piece == null && (Math.Abs(y - piece.Position.Y) + (Math.Abs(x - piece.Position.X)) == 1))
+                {
+                    piece.AvailabeMoves.Add(new Pos(y, x));
+                }
+                else { } //dont do anything
             }
             else
             {
@@ -115,7 +124,7 @@ namespace ChessMan
             {
                 tempx = x + 1;
                 tempy = y + 1;
-                while (tempx > 8 && tempy > 8)
+                while (tempx < 8 && tempy < 8)
                 {
                     Spaces[tempy, tempx].UnderThreat.Add(piece);
                     MarkAvailableMove(piece, tempy, tempx);
@@ -132,7 +141,7 @@ namespace ChessMan
             {
                 tempx = x + 1;
                 tempy = y - 1;
-                while (tempx > 8 && tempy >= 0)
+                while (tempx < 8 && tempy >= 0)
                 {
                     Spaces[tempy, tempx].UnderThreat.Add(piece);
                     MarkAvailableMove(piece, tempy, tempx);
@@ -338,7 +347,7 @@ namespace ChessMan
 
 
             }
-            else
+            else //black peice
             {
                 if(piece.Position.Y == 7)
                 {
@@ -680,6 +689,7 @@ namespace ChessMan
             piece.HasMoved = true;
 
             AddThreats(piece);
+            UpdateBoardSpace(temp);
 
         }
 
@@ -773,6 +783,23 @@ namespace ChessMan
 
         }
 
+        public void UpdateBoardSpace(Pos pos)
+        {
+            if (Spaces[pos.Y, pos.X].UnderThreat.Count > 0)
+            {
+                List<Piece> pieces = new List<Piece>();
+                foreach (Piece p in Spaces[pos.Y, pos.X].UnderThreat)
+                {
+                    pieces.Add(p);
+                }
+                foreach (Piece p in pieces)
+                {
+                    RemoveThreats(p);
+                    AddThreats(p);
+                }
+            }
+        }
+
         public void Move(Piece piece, Pos pos, MoveType move)
         {
             MoveType moveType = MoveType.Norm;
@@ -801,19 +828,7 @@ namespace ChessMan
                 default:
                     break;
             }
-            if (Spaces[pos.Y, pos.X].UnderThreat.Count > 0)
-            {
-                List<Piece> pieces = new List<Piece>();
-                foreach(Piece p in Spaces[pos.Y, pos.X].UnderThreat)
-                {
-                    pieces.Add(p);
-                }
-                foreach(Piece p in pieces)
-                {
-                    RemoveThreats(p);
-                    AddThreats(p);
-                }
-            }
+            UpdateBoardSpace(pos);
             turn = PlayerExt.Opponent(turn);
         }
 
