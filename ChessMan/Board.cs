@@ -232,7 +232,7 @@ namespace ChessMan
                 {
                     Spaces[tempy, x].UnderThreat.Add(piece);
                     MarkAvailableMove(piece, tempy, x);
-                    if (Spaces[y, tempx].IsOccupied())
+                    if (Spaces[tempy, x].IsOccupied())
                     {
                         break;
                     }
@@ -246,7 +246,7 @@ namespace ChessMan
                 {
                     Spaces[tempy, x].UnderThreat.Add(piece);
                     MarkAvailableMove(piece, tempy, x);
-                    if (Spaces[y, tempx].IsOccupied())
+                    if (Spaces[tempy, x].IsOccupied())
                     {
                         break;
                     }
@@ -360,14 +360,12 @@ namespace ChessMan
                     Spaces[piece.Position.Y + 2, piece.Position.X].UnderThreat.Add(piece);
                     MarkAvailableMove(piece, piece.Position.Y + 2, piece.Position.X);
                 }
-                if (piece.Position.X > 0 && Spaces[piece.Position.Y + 1, piece.Position.X - 1].Piece != null
-                    && Spaces[piece.Position.Y + 1, piece.Position.X - 1].Piece.Color != piece.Color)
+                if (piece.Position.X > 0)
                 {
                     Spaces[piece.Position.Y + 1, piece.Position.X - 1].UnderThreat.Add(piece);
                     MarkAvailableMove(piece, piece.Position.Y + 1, piece.Position.X - 1);
                 }
-                if (piece.Position.X < 7 && Spaces[piece.Position.Y + 1, piece.Position.X + 1].Piece != null
-                    && Spaces[piece.Position.Y + 1, piece.Position.X + 1].Piece.Color != piece.Color)
+                if (piece.Position.X < 7)
                 {
                     Spaces[piece.Position.Y + 1, piece.Position.X + 1].UnderThreat.Add(piece);
                     MarkAvailableMove(piece, piece.Position.Y + 1, piece.Position.X + 1);
@@ -540,7 +538,7 @@ namespace ChessMan
                 while (tempy >= 0)
                 {
                     Spaces[tempy, x].UnderThreat.Remove(piece);
-                    if (Spaces[y, tempx].IsOccupied())
+                    if (Spaces[tempy, x].IsOccupied())
                     {
                         break;
                     }
@@ -553,7 +551,7 @@ namespace ChessMan
                 while (tempy < 8)
                 {
                     Spaces[tempy, x].UnderThreat.Remove(piece);
-                    if (Spaces[y, tempx].IsOccupied())
+                    if (Spaces[tempy, x].IsOccupied())
                     {
                         break;
                     }
