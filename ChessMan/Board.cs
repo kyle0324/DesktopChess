@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Runtime.CompilerServices;
 
 namespace ChessMan
@@ -29,6 +30,18 @@ namespace ChessMan
 
         public List<Piece> UnderThreat { get; set; } = [];
 
+        public bool ThreatByOppColor(Player player)
+        {
+            foreach (Piece piece in UnderThreat)
+            {
+                if (piece.Color != player)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public Space() { }
 
     }
@@ -42,9 +55,12 @@ namespace ChessMan
         public int BMovesNum = 0;
         public Player turn = Player.White;
 
+        public Pos Wking { get; set; } = new Pos(7, 3);
+        public Pos Bking { get; set; } = new Pos(0, 3);
+
         public void MarkAvailableMove(Piece piece, int y, int x)
         {
-            if (Spaces[y, x].Piece != null && Spaces[y, x].Piece.Color == piece.Color) { }
+            if (Spaces[y, x].IsOccupied() && Spaces[y, x].Piece.Color == piece.Color) { }
             else if (piece.Type == PieceType.pawn)
             {
                 if (Math.Abs(y - piece.Position.Y) == 2 && Spaces[y, x].Piece == null) //2 spaces foward
@@ -61,9 +77,18 @@ namespace ChessMan
                 }
                 else { } //dont do anything
             }
+            else if (piece.Type == PieceType.king && Spaces[y, x].ThreatByOppColor(piece.Color))
+            {
+                //nothing because we can't put ourselves in check
+            }
             else
             {
                 piece.AvailabeMoves.Add(new Pos(y, x));
+                if (Spaces[y, x].IsOccupied() && Spaces[y, x].Piece.Type == PieceType.king) //check for check
+                {
+                    Wcheck = Spaces[y, x].Piece.Color == Player.White;
+                    Bcheck = Spaces[y, x].Piece.Color == Player.Black;
+                }
             }
         }
 
@@ -688,7 +713,18 @@ namespace ChessMan
 
             AddThreats(piece);
             UpdateBoardSpace(temp);
+            if (piece.Type == PieceType.king)
+            {
+                if (piece.Color == Player.White)
+                {
+                    Wking = pos;
+                }
+                else
+                {
+                    Bking = pos;
+                }
 
+            }
         }
 
         private void CastleQMove(Piece piece, Pos pos) //move king left
